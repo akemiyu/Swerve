@@ -6,10 +6,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.autos.exampleAuto;
+import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,30 +18,30 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final Joystick primary = new Joystick(Constants.Ports.primary);
 
     /* Drive Controls */
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
+    private final int translationAxis = Joystick.AxisType.kY.value;
+    private final int strafeAxis = Joystick.AxisType.kX.value;
+    private final int rotationAxis = Joystick.AxisType.kZ.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton zeroGyro = new JoystickButton(primary, Constants.Ports.Primary.zeroGyro);
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
-
+    public static final Swerve s_Swerve = new Swerve();
+    public static final Databoard dataBoard = new Databoard();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        dataBoard.getCommand().schedule();
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
-                () -> robotCentric.getAsBoolean()
+                () -> -primary.getRawAxis(translationAxis), 
+                () -> -primary.getRawAxis(strafeAxis), 
+                () -> -primary.getRawAxis(rotationAxis), 
+                () -> false
             )
         );
 
